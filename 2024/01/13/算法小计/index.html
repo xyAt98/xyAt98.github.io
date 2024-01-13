@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xyat98.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="数据结构 1. 数组&#x2F;单链表&#x2F;字符串 1.1 二分法  &lt;力扣34&gt;练习 求左右边界时：  确定每次的范围 确定&#x3D;&#x3D;时，走哪条路 最后返回结果时，判断  什么时候返回（right&#x3D;&#x3D;left or left&#x3D;&#x3D;right+1） 分别讨论target在其中&#x2F;不在其中的情况，会停在哪里（只有这四种！！）  在其中 小于其中所有数 大于所有数 大小处在数组之中的某个位置，但不存在于数组中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法小计.md">
+<meta property="og:url" content="http://xyat98.github.io/2024/01/13/%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Liu">
+<meta property="og:description" content="数据结构 1. 数组&#x2F;单链表&#x2F;字符串 1.1 二分法  &lt;力扣34&gt;练习 求左右边界时：  确定每次的范围 确定&#x3D;&#x3D;时，走哪条路 最后返回结果时，判断  什么时候返回（right&#x3D;&#x3D;left or left&#x3D;&#x3D;right+1） 分别讨论target在其中&#x2F;不在其中的情况，会停在哪里（只有这四种！！）  在其中 小于其中所有数 大于所有数 大小处在数组之中的某个位置，但不存在于数组中">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="d:\%E6%A1%8C%E9%9D%A2\%E7%AC%94%E8%AE%B0\%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image\image-20220207174052104.png">
+<meta property="og:image" content="d:\%E6%A1%8C%E9%9D%A2\%E7%AC%94%E8%AE%B0\%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image\image-20220207175015189.png">
+<meta property="og:image" content="d:\%E6%A1%8C%E9%9D%A2\%E7%AC%94%E8%AE%B0\%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image\image-20220207175719117.png">
+<meta property="og:image" content="d:\%E6%A1%8C%E9%9D%A2\%E7%AC%94%E8%AE%B0\%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image\image-20220207180237471.png">
+<meta property="og:image" content="d:\%E6%A1%8C%E9%9D%A2\%E7%AC%94%E8%AE%B0\%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image\image-20220207180302650.png">
+<meta property="og:image" content="https://mmbiz.qpic.cn/sz_mmbiz_jpg/gibkIz0MVqdHbnHaPibsAQHPibgTF6OUYzMk8VCNRmTgQpV7xRobklibXTSaNn43OzVFpXfJzsaaDwLFWVkOkePhlA/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/sz_mmbiz_jpg/gibkIz0MVqdHbnHaPibsAQHPibgTF6OUYzMEoaSbJlKUa0kHcvOLWvGsWtcFSgTULsiaXicib31fMnk6ic5dP16sq92tA/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/sz_mmbiz_gif/gibkIz0MVqdHbnHaPibsAQHPibgTF6OUYzMrQ92pFbd4DUeTpMwUqpl7dm2aiaefC76I9blH9yD4v7GAGY3pKBFglQ/640?wx_fmt=gif&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="http://xyat98.github.io/2024/01/13/%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1/%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1.assets/image-20220523152647300.png">
+<meta property="og:image" content="d:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20220127090820735.png">
+<meta property="og:image" content="https://images0.cnblogs.com/blog2015/734743/201505/071802188601847.png">
+<meta property="og:image" content="d:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20211211150842848.png">
+<meta property="og:image" content="d:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20211211151421475.png">
+<meta property="og:image" content="d:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20211111195820537.png">
+<meta property="og:image" content="https://mmbiz.qpic.cn/sz_mmbiz_jpg/gibkIz0MVqdHbPt3iaYMdmqUMxEpq0F5AMqngdeqiaUYJ39ExKr5Sk4OyeTiap1KLDH38ib9WMYZTrMRamDIFVxgI9g/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="d:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20211216164709374.png">
+<meta property="og:image" content="http://xyat98.github.io/2024/01/13/%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1/%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1.assets/SouthEast.png">
+<meta property="article:published_time" content="2024-01-13T06:53:23.000Z">
+<meta property="article:modified_time" content="2024-01-13T12:24:05.622Z">
+<meta property="article:author" content="y-n">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:\%E6%A1%8C%E9%9D%A2\%E7%AC%94%E8%AE%B0\%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image\image-20220207174052104.png">
+
+<link rel="canonical" href="http://xyat98.github.io/2024/01/13/%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>算法小计.md | Liu</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Liu</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">0</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">7</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xyat98.github.io/2024/01/13/%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/IMG_9443.JPG">
+      <meta itemprop="name" content="y-n">
+      <meta itemprop="description" content="Faith is a substance of things hoped for, the evidence of things not seen.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Liu">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法小计.md
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-13 14:53:23 / 修改时间：20:24:05" itemprop="dateCreated datePublished" datetime="2024-01-13T14:53:23+08:00">2024-01-13</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1>数据结构</h1>
+<h2 id="1-数组-单链表-字符串">1. 数组/单链表/字符串</h2>
+<h3 id="1-1-二分法">1.1 二分法</h3>
+<blockquote>
+<p><strong>&lt;力扣34&gt;练习</strong></p>
+<p>求左右边界时：</p>
+<ol>
+<li>确定每次的范围</li>
+<li>确定==时，走哪条路</li>
+<li>最后返回结果时，判断
+<ul>
+<li>什么时候返回（right==left or left==right+1）</li>
+<li>分别讨论target在其中/不在其中的情况，会停在哪里（只有这四种！！）
+<ul>
+<li>在其中</li>
+<li>小于其中所有数</li>
+<li>大于所有数</li>
+<li>大小处在数组之中的某个位置，但不存在于数组中</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<ul>
+<li>
+<p>普通的二分：nums[i]随i的变化而单调变化，即有序的数组</p>
+<ul>
+<li>求nums[i]==target</li>
+<li>求左右边界（<strong>注意返回值是否有效或者越界</strong>）</li>
+</ul>
+</li>
+<li>
+<p>扩展的二分：f(x)=y, 因变量y随自变量x的变化而单调变化，甚至可以求两个单调函数一起作用的情况（如：一个递增，一个递减，求相交点这种）</p>
+</li>
+</ul>
+<h3 id="1-2-快慢指针-左右指针">1.2 快慢指针/左右指针</h3>
+<p>常用在单链表中，可以用于求解单链表中是否有环 、一次遍历判断单链表中倒数第k个节点、一次遍历找到单链表的中间节点</p>
+<p>数组：原地处理数组</p>
+<p>注：fast和slow指针都从指向head开始出发</p>
+<h3 id="1-3-滑动窗口">1.3 滑动窗口</h3>
+<p>通常是在一个子数组或子串上进行操作，即滑动窗口，而不需要在整个数组或字符串上进行操作，降低了问题的复杂性。</p>
+<p>用滑动窗口注意三个问题：</p>
+<ul>
+<li>什么时候扩大窗口</li>
+<li>什么时候收缩窗口</li>
+<li>什么时候返回值？</li>
+</ul>
+<h3 id="1-4-回文字符串">1.4 回文字符串</h3>
+<p>暴力、马拉车算法</p>
+<h3 id="1-5-最长回文子序列-区别于最长回文子串">1.5 最长回文子序列/区别于最长回文子串</h3>
+<p>给定一个字符串，找到其中最长的回文子序列，并返回该序列的长度。</p>
+<p>本题中子序列字符串任意位置删除k（len(s)&gt;=k&gt;=0）个字符后留下的子串。</p>
+<p>dp[i][j] 表示从 [i,j] 的最长回文子序列长度</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(s.charAt(i)==s.charAt(j))&#123;</span><br><span class="line">    dp[i][j]=dp[i+<span class="number">1</span>][j-<span class="number">1</span>]+<span class="number">2</span>;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    dp[i][j]=Math.max(dp[i+<span class="number">1</span>][j],dp[i][j-<span class="number">1</span>]);</span><br><span class="line">    <span class="comment">//因为i！=j，因此i和j对此无增益，所以要么dp[i][j]=dp[i+1][j],要么dp[i][j]=dp[i][j-1];</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-6-前缀和">1.6 前缀和</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=nums.length;i++) </span><br><span class="line">    <span class="comment">//sum[i]代表(0~i-1的nums的和)</span></span><br><span class="line">    sum[i]=sum[i-<span class="number">1</span>]+nums[i-<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
+<h3 id="1-7-差分数组">1.7 差分数组</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">differ[<span class="number">0</span>]=nums[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;nums.length;i++)</span><br><span class="line">    differ[i]=nums[i]-nums[i-<span class="number">1</span>];</span><br><span class="line"><span class="comment">//从differ数组倒推nums，</span></span><br><span class="line"><span class="comment">//nums[i]=differ[i]+nums[i-1]</span></span><br><span class="line"><span class="comment">//nums[i]=differ[i]+differ[i-1]+...+differ[0];</span></span><br><span class="line"><span class="comment">//改变differ[i]就是对nums[i]到nums[len-1]进行改变</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-8-单调栈-单调队列">1.8 单调栈/单调队列</h3>
+<h2 id="2-二叉树">2. 二叉树</h2>
+<h3 id="前序">前序</h3>
+<h3 id="中序">中序</h3>
+<h3 id="后序">后序</h3>
+<h3 id="bfs">bfs</h3>
+<h3 id="dfs">dfs</h3>
+<h3 id="构造二叉树">构造二叉树</h3>
+<p>从前序+中序构造，从后序和中序构造</p>
+<h3 id="序列化">序列化</h3>
+<h2 id="3-图">3. 图</h2>
+<h3 id="bfs-2">bfs</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">bfs</span><span class="params">(Node root)</span>&#123;</span><br><span class="line">  Queue&lt;Node&gt; q=<span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;Node&gt;();</span><br><span class="line">  Set&lt;Node&gt; visited;</span><br><span class="line">  <span class="type">int</span> step=<span class="number">0</span>;<span class="comment">//扩散的层级数</span></span><br><span class="line">  q.offer(root);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">while</span>(!q.isEmpty())&#123;</span><br><span class="line">    <span class="type">int</span> sz=q.size();</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;sz;i++)&#123;<span class="comment">//这一层所有元素</span></span><br><span class="line">      Node r=q.poll();</span><br><span class="line">      visited.add(r);</span><br><span class="line">      <span class="keyword">for</span>(Node child:getChilds(r))&#123;</span><br><span class="line">        <span class="keyword">if</span>(visited.contains(child)) <span class="keyword">continue</span>;</span><br><span class="line">        q.offer(child);</span><br><span class="line">      &#125; </span><br><span class="line">    &#125;</span><br><span class="line">    step++;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>双向bfs</p>
+<p>从起点和终点开始设置两个queue，每次要visit的时候判断一下当前要访问的节点是否存在于另一个方向的queue中，如果存在就说明双向bfs交汇了。</p>
+<h3 id="dfs-2">dfs</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span>[] visited;</span><br><span class="line">List&lt;Integer&gt; onPath;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">traverse</span><span class="params">(<span class="type">int</span> root)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(visited[root]) <span class="keyword">return</span>;</span><br><span class="line">  visited[root]=<span class="literal">true</span>;</span><br><span class="line">  onPath.add(root);</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> neighbor:getNeighbors(root))&#123;</span><br><span class="line">    traverse(neighbor);</span><br><span class="line">  &#125;</span><br><span class="line">  onPath.delete(root);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="拓扑排序">拓扑排序</h3>
+<h3 id="二分图的判定（染色法）">二分图的判定（染色法）</h3>
+<h3 id="最小生成树">最小生成树</h3>
+<p>prim算法：优先队列+visited数组（保证无环）</p>
+<p>Kruskal算法：优先队列+并查集（并查集保证无环）</p>
+<h3 id="单源最短路径">单源最短路径</h3>
+<p>Dijkstra算法：优先队列+最小距离数组+邻接表</p>
+<h1>并查集</h1>
+<h1>设计数据结构（LRU/LFU）</h1>
+<p>Least Recently Used</p>
+<p>Least Frequently Used</p>
+<ul>
+<li>复杂的先画一下流程图；</li>
+<li>把公共的流程抽出来写成一个函数；</li>
+<li>每个程序需要确定哪些全局变量会变化</li>
+</ul>
+<h1>一些有用的函数/技巧</h1>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">IntStream.range(<span class="number">0</span>,n).toArray()；<span class="comment">//返回[0,1,2,...,n-1]的int[]数组</span></span><br><span class="line">IntStream.range(<span class="number">0</span>,n).boxed().toArray(Integer[]::<span class="keyword">new</span>);<span class="comment">//返回[0,1,2,...,n-1]的Integer[]数组</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//排序一个数组但不改变其本来顺序，假如要排序nums但不能改变nums的本来顺序</span></span><br><span class="line"><span class="keyword">var</span> sort=IntStream.range(<span class="number">0</span>,n).boxed().toArray(Integer[]::<span class="keyword">new</span>);</span><br><span class="line"><span class="type">int</span>[] nums=<span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">Arrays.sort(sort,(a,b)-&gt;nums[a]-nums[b]);<span class="comment">//这个方法执行之后，sort中就是nums的数据从小到大的索引</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//复制一个数组</span></span><br><span class="line">Arrays.copyOf(T[] original,<span class="type">int</span> len);</span><br><span class="line">Arrays.copyOfRange(T[] original,<span class="type">int</span> from,<span class="type">int</span> to);</span><br></pre></td></tr></table></figure>
+<h1>1. P问题、NP问题</h1>
+<h2 id="1-1-定义：">1.1 定义：</h2>
+<p><strong>P问题</strong>(polynominal，多项式)：存在多项式时间算法的问题</p>
+<p><strong>NP问题</strong>(Nondeterministic polynominal，非确定性多项式)：能在多项式时间内验证得出一个正确解的问题（这里是<strong>不知道</strong>是否存在一个多项式时间的算法，每次都能解决他，而不是<strong>不存在</strong>）</p>
+<blockquote>
+<p>著名的NP类问题：旅行家推销问题(TSP)。即有一个推销员，要到n个城市推销商品，他要找出一个包含所有n个城市的环路，这个环路路径小于a。我们知道这个问题如果单纯的用枚举法来列举的话会有(n-1)! 种，已经不是多项式时间的算法了，(注：阶乘算法比多项式的复杂)。那怎么办呢？我们可以用猜的，假设我人品好，猜几次就猜中了一条小于长度a的路径，我画画画画，好的，我得到了一条路径小于a的环路，问题解决了，皆大欢喜。可是，我不可能每次都猜的那么准，也许我要猜完所有种呢？所以我们说，这是一个NP类问题。也就是，我们能在多项式的时间内验证并得出问题的正确解，可是我们却不知道该问题是否存在一个多项式时间的算法，每次都能解决他(注意，这里是不知道，不是不存在)。</p>
+<p>所以这就引出了这类讨论的一个千年问题：是否 NP类问题=P类问题？</p>
+<p>圣战的结果是，有的存在，有的不存在。=_=</p>
+</blockquote>
+<h2 id="1-2-待解决">1.2  待解决</h2>
+<p>怎么证明一个问题是NP问题呢？（我好像有点明白了，只要我能在多项式时间内解决问题，哪怕瞎猫碰上死耗子，下一次同样的问题我不一定能解决，也就是说没有一个通用的”方法“，只是上一次凑巧解决了，如上面的例子，我凑巧瞎画给画出来了，但通用的”解决方法“并没有出来）</p>
+<h2 id="1-3-NPC">1.3 NPC</h2>
+<p>non-deterministic polynomial complete problem<br>
+$$<br>
+No：1,2,…k… n\<br>
+A: …a_i,…a_j…\<br>
+O: …a_j,…a_i…\<br>
+O’: …a_i,…a_j…\<br>
+$$</p>
+<p>$$<br>
+No：1,2,…k… n\<br>
+A: …a_i,…a_j…\<br>
+O: …a_j,…a_i…\</p>
+<p>\Delta=Distance(O)-Distance(O’)=\<br>
+d_{11}+d_{12}+d_{13}+d_{14}\<br>
+-d_{21}-d_{22}-d_{23}-d_{24}<br>
+$$</p>
+<h1>并查集（union-find）</h1>
+<p>用途：用于判断图中两个点是否连通（即判断“远房亲戚”）</p>
+<p>只需要实现两个函数（find和merge）</p>
+<p>并查集在构建图的同时标记出了“哪个人”属于“哪个团伙”</p>
+<img src="D:\桌面\笔记\算法小计_image\image-20220207174052104.png" alt="image-20220207174052104" style="zoom: 50%;" />
+<p>对于一个有n个节点，m条边的图来说（不带环的图），需要一个数组f[n]来存储各节点的团伙代表人。</p>
+<ol>
+<li>
+<p>初始化</p>
+<p>初始化之前的状态即是各个节点都没有边，则f[n]=n;各节点的团伙代表人是自己</p>
+<img src="D:\桌面\笔记\算法小计_image\image-20220207175015189.png" alt="image-20220207175015189" style="zoom:33%;" />
+<pre><code> 2. 合并团伙
+</code></pre>
+<p>假如a、b有一条边，f[a的代表人]=（b的代表人）</p>
+<p>eg：最开始1、3有一条边，令f[3]=f[1]=1;</p>
+<p>3、4有一条边，令f[f[3]]=f[4] ==&gt;f[1]=4;</p>
+  <img src="D:\桌面\笔记\算法小计_image\image-20220207175719117.png" alt="image-20220207175719117" style="zoom:33%;" />
+<pre><code> 3. 查找团伙代表人，直接团伙代表人满足f[a]=a，则a是团伙代表人。
+</code></pre>
+<p>eg：1、3、4的团伙代表人是4</p>
+<p>合并和查找的时间复杂度为O(h)。h是树的高度</p>
+<p>eg：</p>
+  <img src="D:\桌面\笔记\算法小计_image\image-20220207180237471.png" alt="image-20220207180237471" style="zoom:50%;" />
+  <img src="D:\桌面\笔记\算法小计_image\image-20220207180302650.png" alt="image-20220207180302650" style="zoom:50%;" />
+</li>
+</ol>
+<h2 id="优化">优化</h2>
+<blockquote>
+<p>为了防止并查集退化为O(n)的时间复杂度</p>
+</blockquote>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/gibkIz0MVqdHbnHaPibsAQHPibgTF6OUYzMk8VCNRmTgQpV7xRobklibXTSaNn43OzVFpXfJzsaaDwLFWVkOkePhlA/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt=""></p>
+<p><strong>1. 秩优化（平衡性优化）</strong></p>
+<p>使小一点的树成为大一点的树的子树</p>
+<p>这一步影响的是union算法</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/gibkIz0MVqdHbnHaPibsAQHPibgTF6OUYzMEoaSbJlKUa0kHcvOLWvGsWtcFSgTULsiaXicib31fMnk6ic5dP16sq92tA/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt=""></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> p, <span class="type">int</span> q)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">rootP</span> <span class="operator">=</span> find(p);</span><br><span class="line">    <span class="type">int</span> <span class="variable">rootQ</span> <span class="operator">=</span> find(q);</span><br><span class="line">    <span class="keyword">if</span> (rootP == rootQ)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 小树接到大树下面，较平衡</span></span><br><span class="line">    <span class="keyword">if</span> (size[rootP] &gt; size[rootQ]) &#123;<span class="comment">//z</span></span><br><span class="line">        parent[rootQ] = rootP;</span><br><span class="line">        size[rootP] += size[rootQ];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        parent[rootP] = rootQ;</span><br><span class="line">        size[rootQ] += size[rootP];</span><br><span class="line">    &#125;</span><br><span class="line">    count--;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2. 路径压缩</strong></p>
+<p>压缩每一棵树的高度(影响的是find算法)</p>
+<p>这一步是为了能在O(1)的时间找到某一结点的根节点</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_gif/gibkIz0MVqdHbnHaPibsAQHPibgTF6OUYzMrQ92pFbd4DUeTpMwUqpl7dm2aiaefC76I9blH9yD4v7GAGY3pKBFglQ/640?wx_fmt=gif&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt=""></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">find</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">    <span class="keyword">while</span> (parent[x] != x) &#123;</span><br><span class="line">        <span class="comment">// 进行路径压缩</span></span><br><span class="line">        parent[x] = parent[parent[x]];</span><br><span class="line">        x = parent[x];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1>动态规划</h1>
+<blockquote>
+<p>解决一个问题需要许多步骤，这些步骤做法相似且下一个步骤依赖于上一个步骤的结果，所以需要一个存储空间。</p>
+</blockquote>
+<p>关键（steps-递推 ）：</p>
+<ul>
+<li>确定存储空间到底存放当前的什么状态</li>
+<li>确定 状态转移方程（注意计算顺序，考虑更新后的数对其他有没有影响）</li>
+<li>确定需要初始化的状态（以及处理边界）</li>
+</ul>
+<p><strong>容易出错的地方是在</strong>：dp定义、base case、处理顺序上</p>
+<p>条件：</p>
+<ul>
+<li>
+<p>无后效性：前面的各种决策结果均由这个状态表示，在考虑后面的决策过程没有任何区别。</p>
+<p>eg：leetcode地下城与勇士-173这个题<br>
+<img src="%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1.assets/image-20220523152647300.png" alt=""></p>
+<p>从(0,0)到(1,2)有两条路径，根据不同的路径走到（1，2），再继续从（1，2）往下走是不一样的结果。这就是不满足“无后效性”。</p>
+</li>
+</ul>
+<p>分割类问题</p>
+<p>子序列问题</p>
+<p>背包问题</p>
+<p>字符串编辑问题</p>
+<p>股票问题</p>
+<h1>分治法</h1>
+<h1>排序</h1>
+<h2 id="归并排序">归并排序</h2>
+<p><strong>方法：</strong></p>
+<p><img src="D:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20220127090820735.png" alt=""></p>
+<p><strong>时间复杂度：</strong>$O(nlog_2{n})$</p>
+<p>高度为$log_2{n}$, 每一层排序所用时间为$O(n)$</p>
+<p><strong>空间复杂度：</strong> 对于链表来说，每一个节点可以单独拎出来，不需要额外的空间。对于数组来说，不太适用，空间需要$O(nlog_2{n})$,每一层的情况都需要保存。</p>
+<p><strong>归并排序可以用来求逆序对</strong>:</p>
+<p>合并阶段 本质上是 合并两个排序数组 的过程，而每当遇到 左子数组当前元素 &gt; 右子数组当前元素 时，意味着 「左子数组当前元素 至 末尾元素」 与 「右子数组当前元素」 构成了若干 「逆序对」</p>
+<p>作者：jyd<br>
+链接：<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/solution/jian-zhi-offer-51-shu-zu-zhong-de-ni-xu-pvn2h/">https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/solution/jian-zhi-offer-51-shu-zu-zhong-de-ni-xu-pvn2h/</a><br>
+来源：力扣（LeetCode）<br>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+<h2 id="桶排序">桶排序</h2>
+<blockquote>
+<p>就是将待排序的数放入不同的桶中，桶内单独排序，再一起排（最好桶内元素数量相当）</p>
+<p>桶排序最好的时间复杂度是）线性O(n)</p>
+</blockquote>
+<h2 id="基数排序">基数排序</h2>
+<blockquote>
+<p>对待排序的数组，</p>
+<ol>
+<li>先求出最大位数max</li>
+<li>将所有元素的位数补齐至max（高位补0）</li>
+<li>按照位数上的值进行排序（共进行max次，可由低到高，也可由高到低）</li>
+</ol>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">radixSort</span><span class="params">()</span>&#123;</span><br><span class="line">  Scanner in=<span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line">  System.out.print(<span class="string">&quot;请输入数组长度：&quot;</span>);</span><br><span class="line">  <span class="type">int</span> n=in.nextInt();</span><br><span class="line">  System.out.println(<span class="string">&quot;请输入数组：&quot;</span>);</span><br><span class="line">  <span class="type">int</span>[] data=<span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">  LinkedList&lt;Integer&gt;[] bucket = <span class="keyword">new</span> <span class="title class_">LinkedList</span>[<span class="number">10</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++) bucket[i] = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> v=<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//1.判断最大位数</span></span><br><span class="line">        <span class="type">int</span> max=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;n;i++) &#123;</span><br><span class="line">            data[i]=in.nextInt();</span><br><span class="line">            max=Math.max(max,getLen(data[i]));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//2. 按照各个位数进行排序</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;max;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> e:data)&#123;</span><br><span class="line">                bucket[(e/v)%<span class="number">10</span>].offerLast(e);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//将每一轮的结果写回到data中</span></span><br><span class="line">            <span class="type">int</span> x=<span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> k=<span class="number">0</span>;k&lt;<span class="number">10</span>;k++)&#123;</span><br><span class="line">                <span class="keyword">while</span>(!bucket[k].isEmpty())&#123;</span><br><span class="line">                    data[x++]=bucket[k].pollFirst();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            v *= <span class="number">10</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">getLen</span><span class="params">(<span class="type">int</span> n)</span>&#123;</span><br><span class="line">        <span class="type">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (n!=<span class="number">0</span>)&#123;</span><br><span class="line">            ans++;</span><br><span class="line">            n=n/<span class="number">10</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1>数学问题</h1>
+<h2 id="1-欧几里得算法">1. 欧几里得算法</h2>
+<blockquote>
+<p>原理：两个数的最大公约数（gcd-greatest common divisor）也是其中较小的数和他们的余数的最大公约数</p>
+</blockquote>
+<p>$$<br>
+\begin{aligned}<br>
+&amp; a=kb+r\<br>
+&amp; r=a-kb\<br>
+&amp; \because d|a,d|b; \therefore d|r;(|整除)<br>
+\end{aligned}<br>
+$$</p>
+<p>算法：<br>
+$$<br>
+\begin{aligned}<br>
+&amp; a_1\div a_2=k_1 \ldots a_3\<br>
+&amp; a_2\div a_3=k_2 \ldots a_4\<br>
+&amp; \vdots\<br>
+&amp; a_{n-1}\div a_{n}=k_{n-1}\<br>
+&amp; 直到a_{n}==0<br>
+\end{aligned}<br>
+$$<br>
+扩展欧几里得：<br>
+$$<br>
+\begin{aligned}<br>
+&amp; \exist k_1a+k_2b=gcd(a,b)\<br>
+&amp; a’=b,b’=a % b\<br>
+&amp; xa’+yb’=gcd(a’,b’)=gcd(a,b)\<br>
+&amp; xb+y(a-(a/b)b)=gdc(a,b)\<br>
+&amp; ya+(x-(a/b))b=gcd(a,b)\<br>
+&amp; k_1=y,k_2=x-a/b<br>
+\end{aligned}<br>
+$$</p>
+<h2 id="2-埃拉托斯特尼筛法">2. 埃拉托斯特尼筛法</h2>
+<p>用于判断一个整数是否是质数的方法，且可以在判断一个整数n时，同时判断所有小于n的整数</p>
+<p>原理：从1到n遍历，假设当前遍历到m，则把所有小于n的、且是m的倍数的整数标为和数，遍历完成之后，没有被标的即为质数。</p>
+<h2 id="3-Fisher-Yates洗牌算法">3.Fisher-Yates洗牌算法</h2>
+<p>作用是生成一个有限集合的随机排列</p>
+<p>随机获取一个数的算法</p>
+<p><img src="https://images0.cnblogs.com/blog2015/734743/201505/071802188601847.png" alt=""></p>
+<p>做法就是：</p>
+<ol>
+<li>第1次从1~n的候选集合随机选个数，拿出此数，并把它从候选集合剔除(候选集合n-1)。</li>
+<li>第2次从1~n-1的候选集合随机选个数，拿出此数，并把它从候选集合剔除(候选集合n-2)。</li>
+<li>第3次从1~n-2的候选集合随机选个数，拿出此数，并把它从候选集合剔除(候选集合n-3)。</li>
+</ol>
+<p>时间复杂度：$O(n^2)$</p>
+<p>空间复杂度：$O(m)$</p>
+<h2 id="4-二分查找">4. 二分查找</h2>
+<p><strong>更新</strong>：</p>
+<ol>
+<li>
+<p>mid=low+(high-low)/2;</p>
+</li>
+<li>
+<p>如果是while(low&lt;high),那么搜索区间是[low,high),左闭右开。</p>
+<p>初始化就应该：low=0;high=len; 结束时是low==high跳出循环。</p>
+<p>如果是while(low&lt;=high)，搜索区间是[low,high]，闭区间；初始化：</p>
+<p>low=0;high=len-1;结束时是low==high+1跳出循环。</p>
+</li>
+<li>
+<p>搜索如果不是一个数的话而是某边界的话，例：搜索等于target的左/右边界，这时需要调整if(nums[mid]==target)的操作：</p>
+<p>​		如果是要右边界，low还需要往前缩小范围；如果是要左边界，high还需要往后缩小范围</p>
+</li>
+<li>
+<p>每次更新low或high时需要明确搜索区间。最后得到返回值时需要排除掉边界的情况。</p>
+</li>
+</ol>
+<p>旧：</p>
+<ol>
+<li>算mid，mid=low+(high-low)/2</li>
+<li>结束条件<code>while(low&lt;high)</code></li>
+<li>返回low</li>
+</ol>
+<p>二分查找可能存在的问题：</p>
+<ol>
+<li>陷入死循环</li>
+<li>mid值可能越界</li>
+<li>返回值</li>
+</ol>
+<p><strong>例：</strong></p>
+<p><img src="D:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20211211150842848.png" alt=""></p>
+<p><strong>代码：</strong></p>
+<p><img src="D:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20211211151421475.png" alt=""></p>
+<p><strong>解题思路：</strong> 在[1,n]之间找出一个数m来，m在nums数组中是重复出现的。</p>
+<p>即可以在[1,n]进行二分查找，每找到一个mid，统计一下nums中小于mid的数有多少个count，若count&gt;mid, 则target∈[1,mid]。</p>
+<p>而在第12行，high=mid-1，看上去像是把target==mid的可能性排除在外了，但最后如果target==mid了，low会往high的方向收缩，最终low==high==target-1，返回值依然正确。</p>
+<p>而如果12行写成high=mid，可能会陷入死循环。</p>
+<h2 id="5-水库抽样算法">5. 水库抽样算法</h2>
+<p>[source](<a target="_blank" rel="noopener" href="https://blog.csdn.net/sharelearner/article/details/10917075">(13条消息) 水库抽样问题_共同分享，一起成长-CSDN博客_水库抽样</a>)</p>
+<p><strong>二次描述：</strong></p>
+<p>假设已经从n个数里随机选出了k个数了，现在又来了一个数（总个数变为了n+1）。</p>
+<p>现在要保证这k个数的被选择概率为$\frac{1}{n+1}$（现在是$\frac{1}{n}$）。</p>
+<p>做法：</p>
+<ul>
+<li>int i=random(1,n+1);//从[1，n+1]随机选一个数,这个数满足被选概率为$\frac 1{n+1}$</li>
+<li>前面已经被选择出的k个数被替换的比例要为$\frac{n}{n+1}$,因为要保证最终被选的概率为$\frac{1}{n+1}$。（$\frac{1}{n}*\frac{n}{n+1}=\frac 1{n+1}$）</li>
+</ul>
+<p>问题描述：</p>
+<blockquote>
+<p>输入：一组数据，大小未知，numbers[]</p>
+<p>输出：这组数据的K个均匀抽取</p>
+<p>要求：仅扫描一次</p>
+<p>总体要求：从N个元素中随机的抽取k个元素，其中N无法确定，保证每个元素抽到的概率相同</p>
+<p>现实意义：当内存无法加载全部数据时，如何从包含未知大小的数据流中随机选取k个数据，并且要保证每个数据被抽取到的概率相等。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=k+<span class="number">1</span>;i&lt;=N;i++)&#123;</span><br><span class="line">    <span class="type">int</span> m=random(<span class="number">1</span>,i+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span>(m&lt;=k)&#123;</span><br><span class="line">        swap the mth value and ith value</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>证明（数学归纳）：<br>
+$$<br>
+\begin{aligned}<br>
+一、&amp;当i&lt;=k,每个元素被选中的概率P(i)=1;\<br>
+二、&amp; 当i=k+1,numbers[i]以\frac{k}{k+1}的概率被选中去替换前k个数中的其中之一;\<br>
+&amp; 需证明前k个被保留下来的概率也是\frac{k}{k+1};\<br>
+&amp; 取1&lt;=j&lt;=k,numbers[j]被保留下来的概率：P(j)\<br>
+&amp; =P(j|替换成功)<em>P(替换成功)+P(j|替换失败)<em>P(替换失败)\<br>
+&amp; =\frac{k-1}{k}</em>\frac{k}{k+1}+1</em>\frac{1}{k+1}\<br>
+&amp; =\frac{k}{k+1}\</p>
+<p n+1="">三、&amp; 当i&gt;k+1时，计算前i-1个元素被选中的概率P(i)\<br>
+&amp; 假设i=n时成立，证明i=n+1的情况\<br>
+&amp; i=n成立，即i=n时，\forall 1&lt;=j&lt;=n都以\frac{k}{n}的概率出现在结果集中\<br>
+&amp; 同理，\because P(n+1)=\frac{k}{n+1},后续只需证明前n个数中\forall 1&lt;=j&lt;=n，P(j):\<br>
+&amp; =P(j|替换发生) * P(替换发生)+  P(j|替换没发生) * P(替换没发生)\<br>
+&amp; = \frac{k}{n+1} * \frac{k}{n} * \frac{k-1}{k} +\frac{ k}{n} <em>\frac{n+1-k}{n+1}\<br>
+&amp; = k</em>\frac{k-1}{n*(n+1)} + k*\frac{n+1-k}{n*(n+1)} \<br>
+&amp; =  k*\frac{k-1+n+1-k}{n*(n+1)} \<br>
+&amp; =  \frac{k}</p>
+<p>\end{aligned}<br>
+$$</p>
+<h2 id="6-sum-i-1-n-a-i-x-最小值">6. $$\sum_{i=1}^{n}{|a_i-x|}最小值$$</h2>
+<p>用到$$|x|+|y|&gt;=|x-y|$$来证明<br>
+$$<br>
+\begin{aligned}<br>
+&amp; 求\sum_{i=1}^{n}{|a_i-x|}<em i="1">{min}\<br>
+&amp; 将{a_n}列表按非降序排列为{b_n}={b_1,b_2,\dots,b_n};\<br>
+\<br>
+&amp; 1. 假设n=2*k+1\<br>
+&amp; \sum</em>^{n}{|a_i-x|}<em i="1">{min}=\sum</em>^n{|b_i-x|}<em 2k+1="">{min}\<br>
+&amp; =|b_1-x|+|b_2-x|+\dots+|b_n-x|\<br>
+&amp; \geq|b_1-x-b</em>+x|+|b_2-x-b_{2k}+x|+\dots+|b_{k+1}-x|\<br>
+&amp; =|b_1-b_{2k+1}|+|b_2-b_{2k}|+\dots+|b_k-b_{k+2}|+|b_{k+1}-x|\<br>
+&amp; 当且仅当x=b_{k+1}时，等式成立\<br>
+&amp; \sum_{i=1}^{n}{|a_i-x|}<em i="1">{min}=\sum</em>^n{|b_i-x|}<em 2k+1="">{min}=|b_1-b</em>|+|b_2-b_{2k}|+\dots+|b_k-b_{k+2}|\<br>
+\<br>
+&amp; 2.当x=2k时，b_k\leq x\geq b_{k+1}时，取得\sum_{i=1}^{n}{|a_i-x|}<em 2k+1="">{min}\<br>
+&amp; =|b_1-b</em>|+|b_2-b_{2k}|+\dots+|b_k-b_{k+1}|<br>
+\end{aligned}<br>
+$$</p>
+<h2 id="7-从rand-n-得到rank-m">7. 从rand(n)得到rank(m)</h2>
+<p>一、当$n\geq{m}$，可以通过用$rand(n)$（一次或多次）得到$rand(m)$</p>
+<p m="">​        证明：每个值被得到的概率是$\frac{1}{m}$<br>
+$$<br>
+\begin{aligned}<br>
+&amp; 1.第一次k_1=rand(n),1\leq k_1\leq{m},P_1=\frac{1}{n}\<br>
+&amp; 2.第二次1\leq k_2\leq{m},即第一次m&lt;k_1\leq{n},P_2=\frac{n-m}{n}<em>\frac{1}{n}\<br>
+&amp; 3.第三次1\leq{k_3}\leq{m},P_3={(\frac{n-m}{n})}^2</em>\frac{1}{n}\<br>
+&amp; \vdots\<br>
+&amp; P=\lim_{N\rightarrow \infty}P_1+P_2+\cdots+P_N\<br>
+&amp; \quad=\lim_{N\rightarrow \infty}\frac{1}{n}+\frac{n-m}{n}<em>\frac{1}{n}+(\frac{n-m}{n})^2</em>\frac{1}{n}+\cdots+(\frac{n-m}{n})^N*\frac{1}{n}\<br>
+&amp; \quad=\lim_{N\rightarrow \infty}\frac{1}{n}*(\frac{1-(\frac{n-m}{n})^{N+1}}{1-(\frac{n-m}{n})})\<br>
+&amp; \quad=\frac{1}</p>
+<p>\end{aligned}<br>
+$$<br>
+还有一种特殊情况，若m是n的因数，rand(n)%m+1即可得到结果。</p>
+<p>二、如果$n&lt;m$，需要想办法将利用$rand(n)$能描述一个比m大的范围[1,b]。（还需保证新描述的这个范围[1,b]中，每个数字出现的概率均等）<br>
+$$<br>
+\begin{aligned}<br>
+&amp; (rand(n)-1)*a+rand(b) \rightarrow [1,m]\<br>
+&amp; (rand(n)-1)\rightarrow [0,1,2,\cdots,n-1]\<br>
+&amp; (rand(n)-1)*a\rightarrow [0,a,2a,\cdots,(n-1)a]\<br>
+&amp; (rand(n)-1)*a+rand(b)\rightarrow \<br>
+&amp; [0,a,2a,\cdots,(n-1)a]+[1,2,\cdots,b]\<br>
+&amp; [(1,2,\cdots,b),(a+1,a+2,\cdots,(n-1)a+2),\cdots,((n-1)a+1,(n-1)a+2,\cdots,(n-1)a+b)]\<br>
+&amp; 要保证等概率即满足b+1=a+1\Rightarrow b=a</p>
+<p>\end{aligned}<br>
+$$<br>
+构造方法为：$(rand(n)-1)<em>a+rand(a)$得到的范围为[1,n</em>a]</p>
+<h2 id="8-摩尔投票算法">8. 摩尔投票算法</h2>
+<p>问题：在任意多的候选人（选票无序）中，选出获得票数最多的那个</p>
+<p>问题链接：&lt;<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/majority-element/">169. 多数元素 - 力扣（LeetCode） (leetcode-cn.com)</a>&gt;</p>
+<blockquote>
+<p>给定一个大小为 n 的数组，找到其中的多数元素。多数元素是指在数组中出现次数 大于 ⌊ n/2 ⌋ 的元素。</p>
+<p>你可以假设数组是非空的，并且给定的数组总是存在多数元素。</p>
+<p>尝试设计时间复杂度为 O(n)、空间复杂度为 O(1) 的算法解决此问题。</p>
+</blockquote>
+<p>常见算法是对每个候选人所获选票进行统计，其时间复杂度为$O(n)$，空间复杂度为$O(n)$</p>
+<p><strong>摩尔投票法：</strong></p>
+<p>大厅里，有支持各种候选人的投票人，如果两个投票人遇上了并且所支持的候选人不一样，他俩就打一架并且同时倒下。</p>
+<ul>
+<li>如果，存在得了大多数选票的候选人（$&gt;{\lfloor{\frac{n}{2}\rfloor}}$）,那么最终大厅里剩下的那个投票人所支持的候选人一定是得了得了大多数选票的候选人；</li>
+<li>如果，不知道是不是一定存在得了大多数选票的候选人，则最终剩下了一个投票人之后还需要统计一下该投票人所支持的候选人的选票。</li>
+</ul>
+<p>在场的有个叫onwaier的，他很聪明，他想到一个方法。他用他那犀利人目光扫一遍所有代表们的选票，在脑子记住两件事，当前的候选人的名字cand和他对应的计数k（并不是他的选票数）。起始时，k的值为0，看每个人的选票时，先想想现在k是否为0，如果是0就将cand更新为他将看到的候选人的名字并且将k的值更新为1。观察每个人选票的过程，如果这个人的选票与cand相同，则将k的值加1；否则，将k的值减1。最后的cand可能胜选，还需统计他的总选票数是否超过一半。（这里的cand相当于每次跟进行对比的投票人）</p>
+<h2 id="9-环路检测（快慢指针）">9. 环路检测（快慢指针）</h2>
+<p>问题：找循环</p>
+<p>问题链接：&lt;<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/happy-number/">202. 快乐数 - 力扣（LeetCode） (leetcode-cn.com)</a>&gt;</p>
+<blockquote>
+<p>编写一个算法来判断一个数 n 是不是快乐数。</p>
+<p>「快乐数」定义为：</p>
+<p>对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和。<br>
+然后重复这个过程直到这个数变为1，也可能是 无限循环 但始终变不到 1。<br>
+如果可以变为1，那么这个数就是快乐数</p>
+</blockquote>
+<p>判断是否有循环（数重复出现）不要用集合，可以用快慢指针</p>
+<p>快指针：每次走两步</p>
+<p>慢指针：每次走一步</p>
+<p>若快指针==慢指针，则出现了循环。</p>
+<p><strong>注：</strong> 快慢指针可能会在环的任意一点相遇，而环的起点才是重复点（或者说两个指针指向的点）。</p>
+<h2 id="10-霍夫变换">10 . 霍夫变换</h2>
+<h1>位运算</h1>
+<p>科普：负数的二进制表示以其正码的补码形式表示（原码的反码＋1为其补码）</p>
+<p><img src="D:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20211111195820537.png" alt=""></p>
+<ol>
+<li>n&amp;(n-1)：去除n的位级中最低的那一位，eg：101&amp;100 -&gt;100</li>
+<li>n&amp;(-n)：可以得到n的位级中表示最低的那一位，11110100&amp;00001100 $\rightarrow$00000100</li>
+<li>异或满足交换律、结合律</li>
+</ol>
+<h2 id="11-欧拉路径">11. 欧拉路径</h2>
+<h2 id="1-汉明距离">1. 汉明距离</h2>
+<p>两个整数之间的 <a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB">汉明距离</a> 指的是这两个数字对应二进制位不同的位置的数目。</p>
+<h2 id="2-判断2的次方-4的次方">2.判断2的次方/4的次方</h2>
+<p>2的次方形如：n=000100 则n-1=000011</p>
+<p>则n&amp;(n-1)==0即是2的次方</p>
+<p>4在此基础上，1必须在奇数位，若n&amp;(0x55555555)（32位）!=0即为4的次方</p>
+<h1>滑动窗口</h1>
+<h1>前缀树</h1>
+<p>Trie树（字典树）</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/gibkIz0MVqdHbPt3iaYMdmqUMxEpq0F5AMqngdeqiaUYJ39ExKr5Sk4OyeTiap1KLDH38ib9WMYZTrMRamDIFVxgI9g/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt=""></p>
+<p>树枝代表字符（即索引）</p>
+<h1>线段树</h1>
+<p>每个节点代表一个区间之和，叶节点代表一个数组元素的值</p>
+<p>[例题](<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/range-sum-query-mutable/submissions/">307. 区域和检索 - 数组可修改 - 力扣（LeetCode） (leetcode-cn.com)</a>)： 给定数组，完成两类查询，一类是更新数组下标对应的值，另一类查询要求返回数组某个范围内元素的总和。要求两类查询的时间复杂度为$O(\log_2{n})$</p>
+<p>原数组：1、3、5、7、9、11</p>
+<p><img src="D:%5C%E6%A1%8C%E9%9D%A2%5C%E7%AC%94%E8%AE%B0%5C%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1_image%5Cimage-20211216164709374.png" alt=""></p>
+<p>两种方法：递归和非递归</p>
+<ol>
+<li>
+<p>递归（从上往下）tree中根节点的index==1</p>
+<p>递归tree的所需空间为$O(4*n)$ ,tree的高度为$h=\lceil \log_2{n} \rceil +1$</p>
+<p>tree所需空间<br>
+$$<br>
+\begin{align}<br>
+&amp;=2^0+2^1+2^2+\cdots+2^h\<br>
+&amp;=\frac{1*(1-2^{h+1})}{1-2}\<br>
+&amp;=2^{h+1}-1\<br>
+&amp;&lt;=2<em>2^{\lceil \log_2{n} \rceil}=2</em>(n<em>2)=4</em>n<br>
+\end{align}<br>
+$$</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//递归版：所需空间为O(4*n)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NumArray</span> &#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="type">int</span>[] myNums;</span><br><span class="line">    <span class="type">int</span>[] tree;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">NumArray</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        n=nums.length;</span><br><span class="line">        myNums=<span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;n;i++) myNums[i]=nums[i];</span><br><span class="line">        tree=<span class="keyword">new</span> <span class="title class_">int</span>[n&lt;&lt;<span class="number">2</span>];</span><br><span class="line">        buildTree(<span class="number">1</span>,<span class="number">0</span>,n-<span class="number">1</span>);     </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">buildTree</span><span class="params">(<span class="type">int</span> node,<span class="type">int</span> start,<span class="type">int</span> end)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(start==end)&#123;</span><br><span class="line">            tree[node]=myNums[start];</span><br><span class="line">            <span class="keyword">return</span> ;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> mid=(start+end)/<span class="number">2</span>;</span><br><span class="line">        <span class="type">int</span> left_node=<span class="number">2</span>*node;</span><br><span class="line">        <span class="type">int</span> right_ndoe=left_node+<span class="number">1</span>;</span><br><span class="line">        buildTree(left_node,start,mid);</span><br><span class="line">        buildTree(right_ndoe,mid+<span class="number">1</span>,end);</span><br><span class="line">        tree[node]=tree[left_node]+tree[right_ndoe];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">update</span><span class="params">(<span class="type">int</span> index, <span class="type">int</span> val)</span> &#123;</span><br><span class="line">        updateTree(index,val,<span class="number">1</span>,<span class="number">0</span>,n-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateTree</span><span class="params">(<span class="type">int</span> index,<span class="type">int</span> val,<span class="type">int</span> node,<span class="type">int</span> start,<span class="type">int</span> end)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(start==end)&#123;</span><br><span class="line">            myNums[index]=val;</span><br><span class="line">            tree[node]=val;</span><br><span class="line">            <span class="keyword">return</span> ;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> mid=(start+end)/<span class="number">2</span>;</span><br><span class="line">        <span class="type">int</span> left_node=<span class="number">2</span>*node;</span><br><span class="line">        <span class="type">int</span> right_ndoe=left_node+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(index&lt;=mid &amp;&amp; index&gt;=start)&#123;</span><br><span class="line">            updateTree(index,val,left_node,start,mid);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            updateTree(index,val,right_ndoe,mid+<span class="number">1</span>,end);</span><br><span class="line">        &#125;</span><br><span class="line">        tree[node]=tree[left_node]+tree[right_ndoe];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">sumRange</span><span class="params">(<span class="type">int</span> left, <span class="type">int</span> right)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> sumTree(left,right,<span class="number">1</span>,<span class="number">0</span>,n-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">sumTree</span><span class="params">(<span class="type">int</span> left,<span class="type">int</span> right,<span class="type">int</span> node,<span class="type">int</span> L,<span class="type">int</span> R)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(left&gt;R || right&lt;L) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(L==R || (L&gt;=left &amp;&amp; R&lt;=right)) <span class="keyword">return</span> tree[node]; </span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> mid=(L+R)/<span class="number">2</span>;</span><br><span class="line">        <span class="type">int</span> left_node=node*<span class="number">2</span>;</span><br><span class="line">        <span class="type">int</span> right_ndoe=left_node+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> sumTree(left,right,left_node,L,mid)+sumTree(left,right,right_ndoe,mid+<span class="number">1</span>,R);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>
+<p>非递归（从下往上），tree中从i&gt;=n开始赋值数组中的元素，然后一层一层往上加，所需空间为，n+O(上层需要的空间)<br>
+非递归线段树的特点是：所有非叶节点都有两个子节点</p>
+<p>上层所需空间为：<br>
+$$<br>
+\begin{align}<br>
+&amp;=\frac{n}{2}+\frac{n}{4}+\cdots+1\<br>
+&amp;=n*(\frac{1}{2^1}+\frac{1}{2^2}+\frac{1}{2^3}+\cdots+\frac{1}{2^\infin})\<br>
+&amp;&lt;=n*1<br>
+\end{align}<br>
+$$</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*非递归: 所需空间O（2n）</span></span><br><span class="line"><span class="comment">先找叶节点，原数组中index大于等于n的都是叶节点</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NumArray</span>.</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="type">int</span>[] tree;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">NumArray</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        n=nums.length; </span><br><span class="line">        tree=<span class="keyword">new</span> <span class="title class_">int</span>[n&lt;&lt;<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=n,j=<span class="number">0</span>;j&lt;n;i++,j++) tree[i]=nums[j];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=n-<span class="number">1</span>;i&gt;<span class="number">0</span>;i--) tree[i]=tree[i*<span class="number">2</span>]+tree[i*<span class="number">2</span>+<span class="number">1</span>];<span class="comment">//一定会被填满吗</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">update</span><span class="params">(<span class="type">int</span> index, <span class="type">int</span> val)</span> &#123;</span><br><span class="line">        index=index+n;</span><br><span class="line">        tree[index]=val;</span><br><span class="line">        index/=<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">while</span>(index&gt;<span class="number">0</span>)&#123;</span><br><span class="line">            tree[index]=tree[index*<span class="number">2</span>]+tree[index*<span class="number">2</span>+<span class="number">1</span>];</span><br><span class="line">            index/=<span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">sumRange</span><span class="params">(<span class="type">int</span> left, <span class="type">int</span> right)</span> &#123;</span><br><span class="line">        left+=n;</span><br><span class="line">        right+=n;</span><br><span class="line">        <span class="type">int</span> sum=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(left&lt;=right)&#123;</span><br><span class="line">            <span class="keyword">if</span>(left%<span class="number">2</span>==<span class="number">1</span>)&#123;</span><br><span class="line">                sum+=tree[left];</span><br><span class="line">                left++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(right%<span class="number">2</span>==<span class="number">0</span>)&#123;</span><br><span class="line">                sum+=tree[right];</span><br><span class="line">                right--;</span><br><span class="line">            &#125;</span><br><span class="line">            left/=<span class="number">2</span>;</span><br><span class="line">            right/=<span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="%E7%AE%97%E6%B3%95%E5%B0%8F%E8%AE%A1.assets/SouthEast.png" alt=""></p>
+<h1>扫描线</h1>
+<h1>Manacher算法（马拉车算法）</h1>
+<p>即中心扩展法的优化。用于处理回文字符串的相关问题，时间复杂度为O(n)</p>
+<p>数组dp，dp[i]表示以i为中心的最长回文子串的长度。</p>
+<p>right代表以center为中心的最长回文子串的右边界。</p>
+<p>**重点1：**是计算dp[i]。</p>
+<ol>
+<li>
+<p>i&lt;right</p>
+<p>dp[i]=min(dp[2*center-i],right-i+1)</p>
+<p>然后再向外扩展，while(s.charAt(i-dp[i])==s.charAt(i+dp[i]))</p>
+<p>为什么这里还可以向外扩展</p>
+</li>
+<li>
+<p>其他</p>
+<p>直接while(s.charAt(i-dp[i])==s.charAt(i+dp[i]))</p>
+</li>
+</ol>
+<p><strong>重点2：</strong> 如何处理奇字符串和偶字符串</p>
+<p>答：在所有字符串中插入一个该字符串不会出现的字符，将字符串长度变为奇数。</p>
+<h1>KMP算法</h1>
+<p>一句话来说，这个算法是用来解决在一个字符串s中快速（O(n+m)）匹配子串pattern。</p>
+<p>朴素的解法是：枚举ss中的每个字符为出发点，从ss的出发点和pattern的首位进行匹配。时间复杂度为O(n*m)</p>
+<p>而KMP算法能在非完全匹配的过程中提取到有效信息进行复用，以减少重复匹配的消耗。</p>
+<p>有两个点：</p>
+<ul>
+<li>一个字符串有相同的前缀和后缀，例：abc****abc</li>
+<li>未匹配成功时，需要找到下一个开始匹配的点。下一个开始匹配的点在哪与原串无关，与匹配串有关，所以建立一个长度为pattern.length()大小的next数组，next[i]=<font color="red">第i位前面i-1位组成的子串的最长公共前后缀长度</font>。意义是当第i位不匹配时，模式串要回退的位置。</li>
+<li a,ab="">一个子串的前缀代表不包含最后一个字符的所有前缀，例如aba的前缀是</li>
+<li ba,a="">一个子串的后缀代表不包含第一个字符的所有前缀，例如aba的后缀是</li>
+</ul>
+<p>时间复杂度：O(n+m)</p>
+<p>还是有点不太清楚。</p>
+<p><font color="red">在求next数组时，j代表的什么含义呢？j怎样才会前进？怎样才会后退？后退到什么地步即可？</font></p>
+<p>这里：</p>
+<ol>
+<li>
+<p>i所指的是当前后缀的最后一个字符，j指的是前缀的最后一个字符，所以才有<code>if(pattern.charAt(i)==pattern(j)next[++i]=++j;</code></p>
+</li>
+<li>
+<p>如果i，j所指的字符不相等，则看看[0,j-1]子串有没有可以利用的有效信息，对应<code>j=next[j]</code>, 当然j==0时要先排除掉（说明前面没有有效信息，i需要++了）。</p>
+</li>
+</ol>
+<p>next数组的求法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> i=<span class="number">1</span>,j=<span class="number">0</span>;</span><br><span class="line"><span class="comment">//next[i]表示前i-1个子串的最长公共前后缀长度</span></span><br><span class="line"><span class="keyword">while</span>(i&lt;m-<span class="number">1</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(pattern.charAt(i)==pattern.charAt(j)) next[++i]=++j;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(j==<span class="number">0</span>) next[++i]=j;</span><br><span class="line">    <span class="keyword">else</span> j=next[j];         </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>j指向当前最长公共前后缀之后的第一个字符；</p>
+<p>如果这个字符与i指向的字符一致，j++；</p>
+<p>不一致，则回退到j=next[j]</p>
+<h1>其他</h1>
+<ol>
+<li>字符串的迭代：</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">char</span> c:string.toCharArray())<span class="comment">//更快</span></span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;string.length();i++)</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>快慢指针可以更快找到链表中点。</li>
+</ol>
+<h1>序列化</h1>
+<p>判断两棵树是否结构相同且各节点对应值是否相同可以用序列化</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/01/01/2024-1-1-%E9%9A%8F%E7%AC%94/" rel="prev" title="2024_1_1_随笔">
+      <i class="fa fa-chevron-left"></i> 2024_1_1_随笔
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/13/%E6%B8%90%E6%9E%84%E5%AE%9E%E8%B7%B5-md/" rel="next" title="渐构实践.md">
+      渐构实践.md <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%95%B0%E7%BB%84-%E5%8D%95%E9%93%BE%E8%A1%A8-%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.1.</span> <span class="nav-text">1. 数组&#x2F;单链表&#x2F;字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%BA%8C%E5%88%86%E6%B3%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 二分法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88-%E5%B7%A6%E5%8F%B3%E6%8C%87%E9%92%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 快慢指针&#x2F;左右指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 滑动窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%9B%9E%E6%96%87%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 回文字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E5%BA%8F%E5%88%97-%E5%8C%BA%E5%88%AB%E4%BA%8E%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 最长回文子序列&#x2F;区别于最长回文子串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-%E5%89%8D%E7%BC%80%E5%92%8C"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 前缀和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-7-%E5%B7%AE%E5%88%86%E6%95%B0%E7%BB%84"><span class="nav-number">1.1.7.</span> <span class="nav-text">1.7 差分数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-8-%E5%8D%95%E8%B0%83%E6%A0%88-%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97"><span class="nav-number">1.1.8.</span> <span class="nav-text">1.8 单调栈&#x2F;单调队列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.2.</span> <span class="nav-text">2. 二叉树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E5%BA%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">前序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E5%BA%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">中序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%BA%8F"><span class="nav-number">1.2.3.</span> <span class="nav-text">后序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bfs"><span class="nav-number">1.2.4.</span> <span class="nav-text">bfs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dfs"><span class="nav-number">1.2.5.</span> <span class="nav-text">dfs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.2.6.</span> <span class="nav-text">构造二叉树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">1.2.7.</span> <span class="nav-text">序列化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%9B%BE"><span class="nav-number">1.3.</span> <span class="nav-text">3. 图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bfs-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">bfs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dfs-2"><span class="nav-number">1.3.2.</span> <span class="nav-text">dfs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">拓扑排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E5%9B%BE%E7%9A%84%E5%88%A4%E5%AE%9A%EF%BC%88%E6%9F%93%E8%89%B2%E6%B3%95%EF%BC%89"><span class="nav-number">1.3.4.</span> <span class="nav-text">二分图的判定（染色法）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.3.5.</span> <span class="nav-text">最小生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%BA%90%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84"><span class="nav-number">1.3.6.</span> <span class="nav-text">单源最短路径</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">并查集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">设计数据结构（LRU&#x2F;LFU）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">一些有用的函数&#x2F;技巧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">1. P问题、NP问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E5%AE%9A%E4%B9%89%EF%BC%9A"><span class="nav-number">5.1.</span> <span class="nav-text">1.1 定义：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E5%BE%85%E8%A7%A3%E5%86%B3"><span class="nav-number">5.2.</span> <span class="nav-text">1.2  待解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-NPC"><span class="nav-number">5.3.</span> <span class="nav-text">1.3 NPC</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">并查集（union-find）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">6.1.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">动态规划</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">分治法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">9.</span> <span class="nav-text">排序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F"><span class="nav-number">9.1.</span> <span class="nav-text">归并排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%B6%E6%8E%92%E5%BA%8F"><span class="nav-number">9.2.</span> <span class="nav-text">桶排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-number">9.3.</span> <span class="nav-text">基数排序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">10.</span> <span class="nav-text">数学问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95"><span class="nav-number">10.1.</span> <span class="nav-text">1. 欧几里得算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%9F%83%E6%8B%89%E6%89%98%E6%96%AF%E7%89%B9%E5%B0%BC%E7%AD%9B%E6%B3%95"><span class="nav-number">10.2.</span> <span class="nav-text">2. 埃拉托斯特尼筛法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Fisher-Yates%E6%B4%97%E7%89%8C%E7%AE%97%E6%B3%95"><span class="nav-number">10.3.</span> <span class="nav-text">3.Fisher-Yates洗牌算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE"><span class="nav-number">10.4.</span> <span class="nav-text">4. 二分查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%B0%B4%E5%BA%93%E6%8A%BD%E6%A0%B7%E7%AE%97%E6%B3%95"><span class="nav-number">10.5.</span> <span class="nav-text">5. 水库抽样算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-sum-i-1-n-a-i-x-%E6%9C%80%E5%B0%8F%E5%80%BC"><span class="nav-number">10.6.</span> <span class="nav-text">6. $$\sum_{i&#x3D;1}^{n}{|a_i-x|}最小值$$</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E4%BB%8Erand-n-%E5%BE%97%E5%88%B0rank-m"><span class="nav-number">10.7.</span> <span class="nav-text">7. 从rand(n)得到rank(m)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E6%91%A9%E5%B0%94%E6%8A%95%E7%A5%A8%E7%AE%97%E6%B3%95"><span class="nav-number">10.8.</span> <span class="nav-text">8. 摩尔投票算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E7%8E%AF%E8%B7%AF%E6%A3%80%E6%B5%8B%EF%BC%88%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88%EF%BC%89"><span class="nav-number">10.9.</span> <span class="nav-text">9. 环路检测（快慢指针）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E9%9C%8D%E5%A4%AB%E5%8F%98%E6%8D%A2"><span class="nav-number">10.10.</span> <span class="nav-text">10 . 霍夫变换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">11.</span> <span class="nav-text">位运算</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E6%AC%A7%E6%8B%89%E8%B7%AF%E5%BE%84"><span class="nav-number">11.1.</span> <span class="nav-text">11. 欧拉路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB"><span class="nav-number">11.2.</span> <span class="nav-text">1. 汉明距离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%A4%E6%96%AD2%E7%9A%84%E6%AC%A1%E6%96%B9-4%E7%9A%84%E6%AC%A1%E6%96%B9"><span class="nav-number">11.3.</span> <span class="nav-text">2.判断2的次方&#x2F;4的次方</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">12.</span> <span class="nav-text">滑动窗口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">13.</span> <span class="nav-text">前缀树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">14.</span> <span class="nav-text">线段树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">15.</span> <span class="nav-text">扫描线</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">16.</span> <span class="nav-text">Manacher算法（马拉车算法）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">17.</span> <span class="nav-text">KMP算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">18.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">19.</span> <span class="nav-text">序列化</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="y-n"
+      src="/images/IMG_9443.JPG">
+  <p class="site-author-name" itemprop="name">y-n</p>
+  <div class="site-description" itemprop="description">Faith is a substance of things hoped for, the evidence of things not seen.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">y-n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
